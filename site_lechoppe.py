@@ -13,7 +13,7 @@ PAGES = [
 # Mots-clés (en minuscules). IMPORTANT sur une page qui mélange plusieurs
 # jeux (comme "Cartes/TCG") : sans mot-clé, vous seriez alerté sur tout,
 # Pokémon compris mais aussi Magic, Yu-Gi-Oh, etc.
-MOTS_CLES = ["pokemon", "pokémon"]
+MOTS_CLES = ["pokemon", "pokémon","one piece"]
 # Nombre maximum de pages à parcourir par catégorie (sécurité anti-boucle infinie).
 MAX_PAGES = 20
 # -----------------------------------------------------------------------------
