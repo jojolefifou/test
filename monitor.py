@@ -4,10 +4,11 @@ la comparaison avec l'état précédent, via les fonctions communes."""
 import sys
 
 import commun
+import site_cartesplus
 import site_lechoppe
 
-# Ajoutez ici un module par site, une fois qu'il est prêt (ex. site_cartesplus).
-SITES = [site_lechoppe]
+# Ajoutez ici un module par site.
+SITES = [site_lechoppe, site_cartesplus]
 
 
 def main():
