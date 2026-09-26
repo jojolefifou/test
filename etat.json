@@ -8,5 +8,45 @@
     "nom": "Pokémon ME05 : Booster – Nuit Noire",
     "prix": "6,90 €",
     "en_stock": false
+  },
+  "https://www.lechoppedeslegendes.fr/produit/one-piece-op17-booster-fr/": {
+    "nom": "One Piece OP17 : Booster FR",
+    "prix": "6,50 €",
+    "en_stock": false
+  },
+  "https://www.lechoppedeslegendes.fr/produit/one-piece-op15-booster-fr/": {
+    "nom": "One Piece OP15 : Booster FR",
+    "prix": "6,50 €",
+    "en_stock": false
+  },
+  "https://www.lechoppedeslegendes.fr/produit/one-piece-op16-booster-fr/": {
+    "nom": "One Piece OP16 : Booster FR",
+    "prix": "6,50 €",
+    "en_stock": false
+  },
+  "https://www.lechoppedeslegendes.fr/produit/one-piece-op10-booster-fr/": {
+    "nom": "One Piece OP10 : Booster FR",
+    "prix": "6,50 €",
+    "en_stock": false
+  },
+  "https://www.lechoppedeslegendes.fr/produit/one-piece-op14-booster-fr/": {
+    "nom": "One Piece OP14 : Booster FR",
+    "prix": "6,50 €",
+    "en_stock": false
+  },
+  "https://www.lechoppedeslegendes.fr/produit/one-piece-op13-booster-fr/": {
+    "nom": "One Piece OP13 : Booster FR",
+    "prix": "6,50 €",
+    "en_stock": false
+  },
+  "https://www.lechoppedeslegendes.fr/produit/one-piece-op12-booster-fr/": {
+    "nom": "One Piece OP12 : Booster FR",
+    "prix": "6,50 €",
+    "en_stock": false
+  },
+  "https://www.lechoppedeslegendes.fr/produit/one-piece-op11-booster/": {
+    "nom": "One Piece OP11 : Booster FR",
+    "prix": "6,50 €",
+    "en_stock": false
   }
 }
