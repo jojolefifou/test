@@ -16,7 +16,7 @@ PAGES = [
 # Mots-clés (en minuscules). IMPORTANT sur une page qui mélange plusieurs
 # jeux (comme "Cartes/TCG") : sans mot-clé, vous serez alerté sur tout,
 # Pokémon compris mais aussi Magic, Yu-Gi-Oh, etc.
-MOTS_CLES = ["pokemon", "pokémon", "one piece"]  # ex. ["pokemon", "ultra-premium", "mentali"]
+MOTS_CLES = ["pokemon", "pokémon","one piece"]  # ex. ["pokemon", "ultra-premium", "mentali"]
 # Nombre maximum de pages à parcourir par catégorie (sécurité anti-boucle infinie).
 MAX_PAGES = 20
 # -----------------------------------------------------------------------------
@@ -72,6 +72,23 @@ def garder(nom):
     return not MOTS_CLES or any(m in nom.lower() for m in MOTS_CLES)
 
 
+def lire_quantite_max(url_produit):
+    """Va chercher, sur la fiche produit, l'attribut max du champ quantité
+    (souvent égal au nombre d'exemplaires restants en stock).
+    Retourne un entier, ou None si introuvable (rupture totale, page
+    différente, plusieurs variantes, etc.)."""
+    try:
+        r = requests.get(url_produit, headers=HEADERS, timeout=30)
+        r.raise_for_status()
+        soupe = BeautifulSoup(r.text, "html.parser")
+        champ = soupe.select_one("input[name='quantity']")
+        if champ and champ.get("max"):
+            return int(champ["max"])
+    except Exception as e:
+        print(f"[ERREUR] lecture quantité sur {url_produit} : {e}", file=sys.stderr)
+    return None
+
+
 def alerter(message):
     print(message)
     if WEBHOOK:
@@ -100,9 +117,13 @@ def main():
             avant = (ancien or {}).get(url)
             if ancien is not None:  # pas d'alerte au tout premier passage
                 if avant is None:
-                    alerter(f"🆕 Nouvelle fiche : **{p['nom']}** ({p['prix']})\n{url}")
+                    qte = lire_quantite_max(url)
+                    suffixe = f" — {qte} en stock" if qte is not None else ""
+                    alerter(f"🆕 Nouvelle fiche : **{p['nom']}** ({p['prix']}){suffixe}\n{url}")
                 elif p["en_stock"] and not avant["en_stock"]:
-                    alerter(f"✅ De retour en stock : **{p['nom']}** ({p['prix']})\n{url}")
+                    qte = lire_quantite_max(url)
+                    suffixe = f" — {qte} en stock" if qte is not None else ""
+                    alerter(f"✅ De retour en stock : **{p['nom']}** ({p['prix']}){suffixe}\n{url}")
             nouveau[url] = p
     ETAT.write_text(json.dumps(nouveau, ensure_ascii=False, indent=2))
 
