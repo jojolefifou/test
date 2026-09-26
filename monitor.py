@@ -66,6 +66,11 @@ def main():
             continue
         if not produits:
             print(f"[ATTENTION] aucun produit lu sur {page} (structure changée ou blocage ?)")
+        else:
+            print(f"[INFO] {len(produits)} produit(s) lu(s) sur {page} :")
+            for p in produits.values():
+                statut = "en stock" if p["en_stock"] else "indisponible"
+                print(f"   - {p['nom']} | {p['prix']} | {statut}")
         for url, p in produits.items():
             if not garder(p["nom"]):
                 continue
