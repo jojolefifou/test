@@ -9,12 +9,16 @@ from bs4 import BeautifulSoup
 
 # ---- À MODIFIER -------------------------------------------------------------
 PAGES = [
-    "https://www.lechoppedeslegendes.fr/categorie-produit/jeux/cartes-a-collectionner/pokemon/",
+    "https://www.lechoppedeslegendes.fr/categorie-produit/jeux/cartes-a-collectionner/",
     # Étape 2 : à tester ensuite (le site peut bloquer le script) :
     # "https://cartesplus.fr/categorie-produit/pokemon/pokemon-produits-neuf/",
 ]
-# Mots-clés (en minuscules). Liste vide = tous les produits de la page.
-MOTS_CLES = []  # exemple : ["ultra-premium", "display", "mentali"]
+# Mots-clés (en minuscules). IMPORTANT sur une page qui mélange plusieurs
+# jeux (comme "Cartes/TCG") : sans mot-clé, vous serez alerté sur tout,
+# Pokémon compris mais aussi Magic, Yu-Gi-Oh, etc.
+MOTS_CLES = ["pokemon", "pokémon", "one piece"]  # ex. ["pokemon", "ultra-premium", "mentali"]
+# Nombre maximum de pages à parcourir par catégorie (sécurité anti-boucle infinie).
+MAX_PAGES = 20
 # -----------------------------------------------------------------------------
 
 WEBHOOK = os.environ.get("DISCORD_WEBHOOK", "")
@@ -22,9 +26,11 @@ ETAT = Path("etat.json")
 HEADERS = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) Chrome/124.0 Safari/537.36"}
 
 
-def lire_page(url):
-    """Retourne {url_produit: {"nom": ..., "prix": ..., "en_stock": bool}}."""
+def lire_page_unique(url):
+    """Retourne {url_produit: {"nom": ..., "prix": ..., "en_stock": bool}} pour UNE page."""
     r = requests.get(url, headers=HEADERS, timeout=30)
+    if r.status_code == 404:
+        return None  # page inexistante : on a dépassé la dernière page
     r.raise_for_status()
     soupe = BeautifulSoup(r.text, "html.parser")
     produits = {}
@@ -45,6 +51,23 @@ def lire_page(url):
     return produits
 
 
+def lire_categorie(url_base):
+    """Parcourt une catégorie sur toutes ses pages (méthode A : /page/2/, /page/3/, ...)."""
+    url_base = url_base.rstrip("/") + "/"
+    produits = {}
+    for num_page in range(1, MAX_PAGES + 1):
+        url = url_base if num_page == 1 else f"{url_base}page/{num_page}/"
+        page = lire_page_unique(url)
+        if page is None:  # 404 : plus de pages au-delà
+            break
+        if not page:  # page vide (fin de la pagination sur certains sites)
+            break
+        produits.update(page)
+        if len(page) < 1:
+            break
+    return produits
+
+
 def garder(nom):
     return not MOTS_CLES or any(m in nom.lower() for m in MOTS_CLES)
 
@@ -60,7 +83,7 @@ def main():
     nouveau = dict(ancien or {})
     for page in PAGES:
         try:
-            produits = lire_page(page)
+            produits = lire_categorie(page)
         except Exception as e:  # site bloqué, panne, etc. : on continue
             print(f"[ERREUR] {page} : {e}", file=sys.stderr)
             continue
