@@ -34,11 +34,11 @@ def main():
             avant = (ancien or {}).get(url)
             if ancien is not None:  # pas d'alerte au tout premier passage
                 if avant is None:
-                    qte = commun.lire_quantite_max(url)
+                    qte = site.lire_quantite(url)
                     suffixe = f" — {qte} en stock" if qte is not None else ""
                     commun.alerter(f"🆕 Nouvelle fiche : **{p['nom']}** ({p['prix']}){suffixe}\n{url}")
                 elif p["en_stock"] and not avant["en_stock"]:
-                    qte = commun.lire_quantite_max(url)
+                    qte = site.lire_quantite(url)
                     suffixe = f" — {qte} en stock" if qte is not None else ""
                     commun.alerter(f"✅ De retour en stock : **{p['nom']}** ({p['prix']}){suffixe}\n{url}")
             nouveau[url] = p
